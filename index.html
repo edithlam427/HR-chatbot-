@@ -1,1 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preface HR Assistant</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
 
+    <style>
+        /* Modern full-page structural reset */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f9fafb;
+            overflow: hidden;
+        }
+
+        /* Container that forces the chatbot window to fill up the entire viewport */
+        #n8n-chat-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* 2. Custom CSS Variable Overrides for @n8n/chat
+           Tweak these to precisely match Preface design guides and themes.
+        */
+        :root {
+            /* Theme Colors */
+            --n8n-chat-primary-color: #111827;          /* Accent / Send button color */
+            --n8n-chat-background-color: #ffffff;       /* Main chat layout panel color */
+            --n8n-chat-text-color: #1f2937;             /* Base conversation text typography */
+            
+            /* Message Bubbles */
+            --n8n-chat-user-bubble-bg: #111827;         /* User message bubble background color */
+            --n8n-chat-user-bubble-text: #ffffff;       /* User message bubble text color */
+            --n8n-chat-bot-bubble-bg: #f3f4f6;          /* HR Assistant response bubble background */
+            --n8n-chat-bot-bubble-text: #1f2937;         /* HR Assistant response text color */
+            
+            /* Structural Sub-components */
+            --n8n-chat-input-bg: #ffffff;               /* Input text box area background background */
+            --n8n-chat-input-text-color: #1f2937;       /* User text typing indicator fill */
+            --n8n-chat-input-placeholder-color: #9ca3af;/* Field placeholder text transparency */
+            --n8n-chat-border-color: #e5e7eb;            /* Structural element dividing lines */
+            
+            /* Typography & Rounding Rules */
+            --n8n-chat-font-size: 16px;                 /* Layout body scale */
+            --n8n-chat-border-radius: 12px;             /* Global element corner metrics */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="n8n-chat-container"></div>
+
+    <script type="module">
+        import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+        createChat({
+            // Place your active n8n Production Chat Trigger Webhook endpoint here
+            webhookUrl: 'YOUR_PRODUCTION_N8N_WEBHOOK_URL_HERE',
+            
+            // HTTP Call structure settings
+            webhookConfig: {
+                method: 'POST',
+                headers: {
+                    // Inject operational or access tokens here if required by your n8n workflow
+                    // 'Authorization': 'Bearer YOUR_TOKEN_HERE' 
+                }
+            },
+            
+            // Target DOM Element injection query rule
+            target: '#n8n-chat-container',
+            
+            // Mode setting: 'fullscreen' forces the interface to span the container bounds
+            mode: 'fullscreen',
+            
+            // Expected keys sent inside the payload object back to n8n node parameters
+            chatInputKey: 'chatInput',
+            chatSessionKey: 'sessionId',
+            
+            // Feature Flags
+            loadPreviousSession: true,   // Remembers local user dialogue state upon layout refresh
+            showWelcomeScreen: false,    // Set true if you want an introductory landing screen state before starting
+            
+            // Pass contextual parameters downstream (Accessible within the n8n webhook payload under the metadata key)
+            metadata: {
+                department: 'Preface Global Employee Services',
+                environment: 'Production'
+            },
+            
+            // Welcome & Onboarding Context Setup
+            initialMessages: [
+                'Welcome to the **Preface HR Assistant Portal**! 👋',
+                'I can help answer your questions regarding internal HR policies, employee benefits, leaves, or operational guidelines. How can I assist you today?'
+            ],
+            
+            // Text Overrides & Localization
+            defaultLanguage: 'en',
+            i18n: {
+                en: {
+                    title: 'Preface HR Portal',
+                    subtitle: 'Inquire about company policies, internal rules, and benefits instantly.',
+                    footer: 'Preface Internal Services',
+                    getStarted: 'Begin New Session',
+                    inputPlaceholder: 'Ask a policy question (e.g., medical coverage, leaves)...',
+                },
+            },
+            
+            /*
+               Streaming Configuration:
+               Set to true if your n8n AI Agent Node has "Enable Streaming Response" active. 
+               This processes the text chunks incrementally for a faster, ChatGPT-like visual update.
+            */
+            enableStreaming: false,
+
+            /*
+               File Attachment Handlers:
+               Set allowFileUploads to true if your AI agent relies on an n8n tools model 
+               designed to receive and analyze documents (e.g., medical claims forms, contracts).
+            */
+            allowFileUploads: false,
+            allowedFilesMimeTypes: 'image/*,application/pdf'
+        });
+    </script>
+</body>
+</html>
